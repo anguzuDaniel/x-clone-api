@@ -1,19 +1,13 @@
-const express = require('express')
-const passport = require('passport')
-const LocalStrategy = require('passport-local').Strategy
-const crypto = require('crypto')
-const User = require('./User')
+const express = require('express');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const crypto = require('crypto');
+const User = require('./models/User');
 
 const MongoStore = require('connect-mongo');
 const mongoose = require('mongoose');
-const username = encodeURIComponent(process.env.DB_USER_NAME)
-const password = encodeURIComponent(process.env.DB_PASSWORD)
-const clusterUrl = process.env.DB_CLUSTER
-const authMechanism = 'DEFAULT';
 
-const dbUri = `mongodb+srv://${username}:${password}@${clusterUrl}`;
-mongoose.connect(dbUri);
-const db = mongoose.connection;
+const db = require('./config/db');
 
 passport.use(new LocalStrategy({ usernameField: 'username' }, async (username, password, done) => {
     try {

@@ -29,8 +29,8 @@ exports.registerUser = async (req, res) => {
         res.status(201).json({
             message: 'User register successfully',
             user: {
-                id: newUser,
-                username: newUser.userName,
+                id: newUser._id,
+                username: newUser.username,
                 email: newUser.email
             }
         });
@@ -47,7 +47,7 @@ exports.loginUser = async (req, res) => {
             return res.status(400).json({ message: 'Email and password are required' });
         }
 
-        const user = User.findOne({ email });
+        const user = await User.findOne({ email });
 
         if (!user) {
             return res.status(404).json({ message: "User not found" });
@@ -65,7 +65,15 @@ exports.loginUser = async (req, res) => {
             { expiresIn: '1d' }
         );
 
-        res.status(200).json({ meassage: 'Login successful', token });
+        res.status(200).json({ 
+            meassage: 'Login successful', 
+            token,
+            user: {
+                id: user._id,
+                email: user.email,
+                user: user.username
+            }
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

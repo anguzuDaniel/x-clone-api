@@ -1,11 +1,24 @@
 const express = require('express');
 require('dotenv').config();
+const passport = require('./passport-config'); // Adjust path if necessary
+const session = require('express-session');
+const bodyParser = require('body-parser');
 const connectDB = require('./config/db');
 
 connectDB();
 
 const app = express();
 app.use(express.json());
+app.use(
+    session({
+        secret: process.env.JWT_SECRET,
+        resave: false,
+        saveUninitialized: false,
+    })
+);
+app.use(passport.initialize());
+app.use(passport.session())
+
 app.use('/auth', require('./routes/auth'));
 app.use('/users', require('./routes/users'));
 
