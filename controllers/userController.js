@@ -1,3 +1,4 @@
+const Post = require('../models/Post');
 const User = require('../models/User');
 
 exports.getUsers = async (req, res) => {
