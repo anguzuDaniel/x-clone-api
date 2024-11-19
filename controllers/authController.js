@@ -78,3 +78,18 @@ exports.loginUser = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+exports.logoutUser = async (req, res) => {
+    req.logout((err) => {
+        if (err) {
+            return res.status(500).json({ message: 'Logout Failed', error: err.message });
+        }
+
+        req.session.destroy((err) => {
+            if (err) return res.status(500).json({ message: err.message })
+
+            res.clearCookie('connect.sid');
+            res.status(200).json({ message: 'Logout successfull' });
+        });
+    });
+};
