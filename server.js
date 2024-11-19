@@ -2,7 +2,7 @@ const express = require('express');
 require('dotenv').config();
 const passport = require('./passport-config'); // Adjust path if necessary
 const session = require('express-session');
-const bodyParser = require('body-parser');
+const userRoutes = require('./routes/users');
 const connectDB = require('./config/db');
 
 connectDB();
@@ -19,8 +19,8 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session())
 
-app.use('/v1/auth', require('./routes/auth'));
-app.use('/v1/users', require('./routes/users'));
+app.use('/api/v1/auth', require('./routes/auth'));
+app.use('/api/v1/user', userRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

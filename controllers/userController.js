@@ -1,32 +1,21 @@
-const { User } = require('../models/User');
+const User = require('../models/User');
 
-exports.getUsers = async (res, req) => {
+exports.getUsers = async (req, res) => {
     try {
-        const { _id, name, email } = req.query;
-
-        const filter = {};
-        if (_id) filter._id = _id;
-        if (name) filter.name = new RegExp(name, 'i');
-        if (email) filter.email = email;
-
-        const users = await User.find(filter, '-password');
-
+        const users = await User.find({});
         res.status(200).json(users);
     } catch (error) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ message: error.message || 'Internal Server Error' || 'Internal Server Error' })
-        }
+        res.status(500).json({ message: error.message });
     }
 };
 
-exports.getUserById = async (res, req) => {
+exports.getUserById = async (req, res) => {
     try {
-        const { _id} = req.query;
+        const { id } = req.params;
 
-        if (!_id) return res.status(400).json({ message: 'User ID is required' }); 
+        if (!id) return res.status(400).json({ message: 'User ID is required' }); 
 
-        const user = await User.findOne({ _id});
+        const user = await User.findById(id).exec();
 
         if (!user) return res.status(404).json({ message: 'User not found' });
 
