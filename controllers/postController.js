@@ -92,3 +92,36 @@ exports.deleteUserPostsByUserId = async (req, res) => {
         res.status(500).json({ message: error.message || "Internal Server error" });
     }
 };
+
+exports.addPostCommentById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const { user, comment } = req.body;
+
+        if (!id) return res.status(400).json({ message: "Please provide a valid post Id" });
+
+        if (!user || !comment) {
+            return res.status(400).json({ message: "User and comment are required" });
+        }
+
+        const results = await Post.findByIdAndUpdate(
+            id, 
+            { 
+                $push: { comments: { user, comment, date: new Date() } }
+            },
+            { new: true, runValidators: true }
+        );
+
+        if (!results) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        return res.status(200).json({ 
+            message: "Comment added.",
+            comment: results
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message || "Internal Server error" });
+    }
+};
