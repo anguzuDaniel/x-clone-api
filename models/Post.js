@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const PostSchema = mongoose.Schema({
     content: { type: String, required: true },
-    image: { type: String },
+    image: { type: String, default: '' },
     author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     comments: [
