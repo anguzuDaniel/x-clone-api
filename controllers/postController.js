@@ -125,3 +125,76 @@ exports.addPostCommentById = async (req, res) => {
         res.status(500).json({ message: error.message || "Internal Server error" });
     }
 };
+
+exports.deletePostCommentById = async (req, res) => {
+    try {
+        const { postId, commentId } = req.params;
+
+        if (!postId) {
+            res.status(404).json({ message: "Please provde a valid post id" });
+        }
+
+        if (!commentId) {
+            res.status(404).json({ message: "Please provde a valid comment id" });
+        }
+
+        const post = await Post.findById(postId);
+
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        const commenIndex = post.comments.findIndex(
+            (comment) =>  comment._id.toString() == commentId
+        );
+
+        if (commenIndex === -1) {
+            return res.status(404).json({ message: "Comment not found" });
+        }
+
+        post.comments.splice(commenIndex, 1);
+
+        await post.save();
+
+        res.status(200).json({ message: "Comment delete successfully", post });
+    } catch (error) {
+        res.status(500).json({ message: error.message || "Internal Server error" });
+    }
+}
+
+exports.updatePostCommentById = async (req, res) => {
+    try {
+        const { postId, commentId } = req.params;
+
+        const { comment } = req.body;
+
+        if (!postId) {
+            res.status(400).json({ message: "Please provide a valid post id." });
+        }
+
+        if (!commentId) {
+            res.status(400).json({ message: "Please provide a valid comment id." });
+        }
+
+        if (!comment) {
+            return res.status(404).json({ message: "Comment is required." });
+        }
+
+        const updatedPost = await Post.findOneAndUpdate(
+            { _id: postId, "comments._id": commentId },
+            { $set: { "comments.$.comment": comment }},
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedPost) {
+            return res.status(404).json({ message: "Post or Comment not found" });
+        }
+
+        res.status(200).json({ 
+            message: "Comment updated successfully",  
+            updatedComment: { comment, date: new Date() },
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message || "Internal Server error" });
+    }
+}
