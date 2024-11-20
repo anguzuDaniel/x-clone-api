@@ -198,3 +198,53 @@ exports.updatePostCommentById = async (req, res) => {
         res.status(500).json({ message: error.message || "Internal Server error" });
     }
 }
+
+exports.toggleLikeToPost = async (req, res) => {
+    try {
+        const { postId, userId } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(postId)) {
+            res.status(400).json({ message: "Invalid post ID provided." });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            res.status(400).json({ message: "Invalid user ID provided." });
+        }        
+
+        const post = await Post.findById(postId);
+
+        if (!post) {
+            res.status(400).json({ message: "Post not found." });
+        }
+
+        const userIndex = post.likes.indexOf(userId);
+
+        if (userIndex !== -1) {
+            post.likes.splice(userIndex, 1);
+            await post.save();
+            return res.status(200).json({
+                message: "Like removed successfully.",
+                post: {
+                    _id: post._id,
+                    likes: post.likes.length,
+                    content: post.content,
+                    author: post.author,
+                },
+            });
+        } else {
+            post.likes.push(userId);
+            await post.save();
+            return res.status(200).json({
+                message: "Like added successfully.",
+                post: {
+                    _id: post._id,
+                    likes: post.likes.length,
+                    content: post.content,
+                    author: post.author,
+                },
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message || "Internal Server error" });
+    }
+}
