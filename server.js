@@ -5,6 +5,7 @@ const session = require('express-session');
 
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
+const imageRoutes = require('./routes/imageRoutes');
 
 const connectDB = require('./config/db');
 
@@ -31,5 +32,9 @@ app.use('/api/v1/user', userRoutes);
 // post routes
 app.use('/api/v1/post', postRoutes);
 
+// upload routes
+app.use('/api/v1/upload/', imageRoutes);
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.timeout = 100000; // 100 seconds
