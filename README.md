@@ -1,4 +1,3 @@
-```markdown
 # x-clone-api
 
 ## Overview
@@ -134,14 +133,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-For any questions or inquiries, please open an issue on the GitHub repository or contact us at [email@example.com].
-
-```
-
-### Notes:
-1. **Bug Notification**: The bug about multiple image uploads is explicitly mentioned in the **Known Issues** section, and it explains the problem along with a note that the issue only occurs with multiple images.
-2. **Contributing**: There are clear instructions on how others can contribute to the project, including how to fork the repo and submit pull requests.
-3. **Environment Setup**: Instructions for setting up AWS credentials for file uploads are included.
-4. **Installation & Running**: Simple steps to clone, install dependencies, and run the project locally.
-
-You can save this `README.md` file and upload it to your GitHub repository. This will give users a clear understanding of the API, how to use it, and the known bug.
+For any questions or inquiries, please open an issue on the GitHub repository or contact us at [anguzud7@gmail.com].
