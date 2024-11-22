@@ -1,20 +1,79 @@
-# x-clone-api
+# x-clone-api Documentation
 
 ## Overview
-`x-clone-api` is a backend API designed to handle various functionalities for managing user posts, images, and interactions in a social media-like application. It provides endpoints for creating posts, uploading images, handling user data, and more. The API uses AWS S3 for image storage and Multer for handling file uploads.
+The `x-clone-api` provides a backend API for managing user accounts, posts, and images for a social media-like application. This API supports user registration, login, post creation, image uploads to AWS S3, and other post-related functionalities.
 
-## Features
-- User authentication and profile management.
-- Creating and managing posts with images.
-- Image uploads to AWS S3 storage.
-- Flexible API endpoints for CRUD operations on posts and images.
+---
 
-## API Documentation
+## Table of Contents
+1. [User Routes](#user-routes)
+2. [Post Routes](#post-routes)
+3. [Image Routes](#image-routes)
+4. [Authentication Routes](#authentication-routes)
+5. [Error Handling](#error-handling)
 
-### 1. **Create Post**
-   **POST** `/api/v1/post/create`
+---
+
+## User Routes
+
+### 1. **Get All Users**
+   **GET** `/api/v1/users/`
    
-   Creates a new post. You can optionally upload images when creating a post.
+   Retrieves all users in the system.
+
+   #### Response:
+   ```json
+   [
+     {
+       "_id": "user_id",
+       "username": "user_name",
+       "email": "user_email"
+     },
+     ...
+   ]
+   ```
+
+### 2. **Get User By ID**
+   **GET** `/api/v1/users/:id`
+   
+   Retrieves a specific user by their `id`.
+
+   #### Response:
+   ```json
+   {
+     "_id": "user_id",
+     "username": "user_name",
+     "email": "user_email"
+   }
+   ```
+
+---
+
+## Post Routes
+
+### 1. **Get All Posts**
+   **GET** `/api/v1/posts/`
+   
+   Retrieves all posts in the system.
+
+   #### Response:
+   ```json
+   [
+     {
+       "_id": "post_id",
+       "title": "Post title",
+       "content": "Post content",
+       "images": ["image_id_1", "image_id_2"],
+       "createdAt": "timestamp"
+     },
+     ...
+   ]
+   ```
+
+### 2. **Add Post**
+   **POST** `/api/v1/posts/`
+   
+   Creates a new post.
 
    #### Request Body:
    ```json
@@ -37,51 +96,198 @@
    }
    ```
 
-### 2. **Upload Post Images**
-   **POST** `/api/v1/upload/image/post/{postId}/{userId}`
+### 3. **Update Post**
+   **PUT** `/api/v1/posts/:id/update`
+   
+   Updates a specific post by its `id`.
 
-   Upload images to an existing post.
+   #### Request Body:
+   ```json
+   {
+     "title": "Updated post title",
+     "content": "Updated content"
+   }
+   ```
+
+   #### Response:
+   ```json
+   {
+     "message": "Post updated successfully",
+     "post": {
+       "_id": "post_id",
+       "title": "Updated post title",
+       "content": "Updated content",
+       "createdAt": "timestamp"
+     }
+   }
+   ```
+
+### 4. **Add Post Comment**
+   **PUT** `/api/v1/posts/:id/comment`
+   
+   Adds a comment to a specific post.
+
+   #### Request Body:
+   ```json
+   {
+     "comment": "This is a comment"
+   }
+   ```
+
+   #### Response:
+   ```json
+   {
+     "message": "Comment added successfully",
+     "post": {
+       "_id": "post_id",
+       "comments": ["comment_id_1"]
+     }
+   }
+   ```
+
+### 5. **Delete Post Comment**
+   **DELETE** `/api/v1/posts/delete/:postId/comment/:commentId`
+   
+   Deletes a specific comment from a post.
+
+   #### Response:
+   ```json
+   {
+     "message": "Comment deleted successfully"
+   }
+   ```
+
+---
+
+## Image Routes
+
+### 1. **Upload Profile Image**
+   **POST** `/api/v1/upload/image/profile/:userId`
+   
+   Uploads a profile image for a user.
 
    #### Request Body:
    **Form Data**:
-   - `postImages`: (Multiple image files, maximum of 10 images).
+   - `image`: (Profile image file)
+
+   #### Response:
+   ```json
+   {
+     "message": "Profile image uploaded successfully",
+     "user": {
+       "_id": "user_id",
+       "profileImageUrl": "image_url"
+     }
+   }
+   ```
+
+### 2. **Upload Post Image**
+   **POST** `/api/v1/upload/image/post/:postId/:userId`
    
+   Uploads images for a post (up to 5 images).
+
+   #### Request Body:
+   **Form Data**:
+   - `postImages`: (Multiple image files, max 5 images)
+
    #### Response:
    ```json
    {
      "message": "Post image uploaded successfully",
      "post": {
        "_id": "post_id",
-       "title": "Post title",
-       "images": ["image_id_1", "image_id_2"],
-       "createdAt": "timestamp"
+       "images": ["image_id_1", "image_id_2"]
      }
-   }
-   ```
-
-   **Note**: Currently, there is a known bug when uploading multiple images. The API works correctly when uploading a single image, but an issue arises with multiple image uploads, causing the request to hang or fail. We are actively working on fixing this bug.
-
-### 3. **Get Post Details**
-   **GET** `/api/v1/post/{postId}`
-   
-   Retrieves details of a specific post.
-
-   #### Response:
-   ```json
-   {
-     "_id": "post_id",
-     "title": "Post title",
-     "content": "Post content",
-     "images": ["image_id_1", "image_id_2"],
-     "createdAt": "timestamp"
    }
    ```
 
 ---
 
+## Authentication Routes
+
+### 1. **Register User**
+   **POST** `/api/v1/auth/register`
+   
+   Registers a new user.
+
+   #### Request Body:
+   ```json
+   {
+     "username": "new_user",
+     "email": "user_email",
+     "password": "user_password"
+   }
+   ```
+
+   #### Response:
+   ```json
+   {
+     "message": "User registered successfully",
+     "user": {
+       "_id": "user_id",
+       "username": "new_user",
+       "email": "user_email"
+     }
+   }
+   ```
+
+### 2. **Login User**
+   **POST** `/api/v1/auth/login`
+   
+   Logs a user into the application.
+
+   #### Request Body:
+   ```json
+   {
+     "email": "user_email",
+     "password": "user_password"
+   }
+   ```
+
+   #### Response:
+   ```json
+   {
+     "message": "User logged in successfully",
+     "user": {
+       "_id": "user_id",
+       "username": "user_name",
+       "email": "user_email"
+     }
+   }
+   ```
+
+### 3. **Logout User**
+   **POST** `/api/v1/auth/logout`
+   
+   Logs a user out of the application.
+
+   #### Response:
+   ```json
+   {
+     "message": "User logged out successfully"
+   }
+   ```
+
+---
+
+## Error Handling
+
+The API uses a robust error handling system to handle various types of errors:
+
+- **Multer Errors**: If there are issues with file uploads (e.g., file size exceeded, unexpected file field).
+- **Validation Errors**: If a validation error occurs (e.g., invalid input).
+- **Server Errors**: If there are internal server issues, the API will return an error with details.
+
+### Common Errors:
+- **File size exceeds the 1.5MB limit**: Occurs if a file is too large during upload.
+- **Unexpected field encountered in the file upload**: Occurs when the uploaded field does not match the expected field in the request.
+- **Too many files uploaded**: Occurs if the number of uploaded files exceeds the specified limit.
+
+---
+
 ## Installation
 
-1. Clone this repository:
+1. Clone the repository:
    ```bash
    git clone https://github.com/your-username/x-clone-api.git
    ```
@@ -92,36 +298,18 @@
    npm install
    ```
 
-3. Set up your environment variables. Create a `.env` file in the root directory and configure the following values:
+3. Set up environment variables:
+   Create a `.env` file in the root of the project with the following:
    ```env
-   AWS_ACCESS_KEY_ID=your-access-key-id
-   AWS_SECRET_ACCESS_KEY=your-secret-access-key
-   AWS_BUCKET_NAME=your-s3-bucket-name
+   AWS_ACCESS_KEY_ID=your-aws-access-key-id
+   AWS_SECRET_ACCESS_KEY=your-aws-secret-access-key
+   AWS_BUCKET_NAME=your-aws-bucket-name
    ```
 
-4. Start the API:
+4. Start the server:
    ```bash
    npm start
    ```
-
----
-
-## Known Issues
-
-- **Multiple Image Upload Bug**: The current version of the API has a bug when uploading multiple images for a post. The request may hang or fail when attempting to upload more than one image. The issue is related to how `multer` handles multiple file uploads with `aws-sdk`. This issue does **not** occur with single-image uploads. We are investigating a fix and will release an update soon.
-
----
-
-## Contributing
-
-We welcome contributions! If you find any bugs or have suggestions, feel free to open an issue or submit a pull request.
-
-### Steps to Contribute:
-1. Fork the repository.
-2. Create a feature branch: `git checkout -b feature-name`.
-3. Make your changes and commit them: `git commit -m "Add feature"`.
-4. Push to your fork: `git push origin feature-name`.
-5. Submit a pull request for review.
 
 ---
 
@@ -133,4 +321,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-For any questions or inquiries, please open an issue on the GitHub repository or contact us at [anguzud7@gmail.com].
+For any questions or issues, please open an issue in the GitHub repository or contact us at [email@example.com].
