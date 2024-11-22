@@ -4,7 +4,7 @@ const imageScheema = mongose.Schema({
     url: { type: String, required: true },
     key: { type: String, required: true },
     userId: { type: mongose.Schema.Types.ObjectId, ref: 'User', required: true },
-    postId: { type: String },
+    postId: { type: mongose.Schema.Types.ObjectId, ref: 'Post' },
     uploadedAt: { type: Date, default: Date.now }
 });
 

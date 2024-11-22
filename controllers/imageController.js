@@ -30,6 +30,9 @@ exports.uploadProfileImage = async (req, res) => {
 }
 
 exports.uploadPostImage = async (req, res) => {
+    console.log('Files received:', req.files); // Should be an array
+    console.log('Body received:', req.body);   // Should contain postId and userId
+
     try {
         const { postId, userId } = req.params;
 
@@ -41,31 +44,25 @@ exports.uploadPostImage = async (req, res) => {
             return res.status(400).json({ message: "Please provide a valid user Id." });
         }
 
-        if (!req.files?.postImage || req.files.postImage.length === 0) {
-            return res.status(400).json({ message: "No file uploaded for the post image." });
-        }
+        console.log(`Upload files: ${JSON.stringify(req.files, null, 2)}`);
 
-        console.log(req.files);
-
-        const imagePromises = req.files.postImage.map(async (file) => {
-            try {
-                const { location, key } = file;
-
-                const image = new Image({ url: location, key: key, userId: userId, postId: postId });
-                await image.save();
-    
-                return image._id;
-            } catch (error) {
-                console.log("Error saving image: ", error.message);
-                throw new Error("Image upload failed");
-            }
+        const imagePromises = req.files.map(async (file) => {
+            const { location, key } = file;
+            const image = new Image({
+                url: location,
+                key: key,
+                userId: userId,
+                postId: postId
+            });
+            await image.save();
+            return image._id;
         });
+
+        const imageIds = await Promise.all(imagePromises)
 
         if (imageIds.length === 0) {
             return res.status(500).json({ message: "Failed to upload images." });
         }
-
-        const imageIds = (await Promise.all(imagePromises)).filter((id) => id !== null);
 
         // Update the Post document to include the image reference
         const post = await Post.findByIdAndUpdate(

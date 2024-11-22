@@ -35,6 +35,12 @@ app.use('/api/v1/post', postRoutes);
 // upload routes
 app.use('/api/v1/upload/', imageRoutes);
 
+app.use((req, res, next) => {
+    console.log('Middleware hit:', req.method, req.url);
+    next();
+});
+
+
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 server.timeout = 100000; // 100 seconds
