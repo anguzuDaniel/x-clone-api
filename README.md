@@ -1,5 +1,3 @@
-Here's a sample `README.md` for your GitHub project documentation for the `x-clone-api`, which specifies the bug when uploading multiple post images.
-
 ```markdown
 # x-clone-api
 
