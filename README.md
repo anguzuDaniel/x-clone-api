@@ -65,7 +65,6 @@ The `x-clone-api` provides a backend API for managing user accounts, posts, and 
        "images": ["image_id_1", "image_id_2"],
        "createdAt": "timestamp"
      },
-     ...
    ]
    ```
 
