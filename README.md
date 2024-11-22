@@ -29,7 +29,6 @@ The `x-clone-api` provides a backend API for managing user accounts, posts, and 
        "username": "user_name",
        "email": "user_email"
      },
-     ...
    ]
    ```
 
